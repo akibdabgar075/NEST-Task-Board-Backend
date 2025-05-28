@@ -45,19 +45,10 @@ export class TaskListController {
       throw new ConflictException('Given Task Name already exists.');
     }
 
-    const task = await this.taskListService.createTaskList(
+    return await this.taskListService.createTaskList(
       dto.list_name,
       user.userId,
     );
-
-    return {
-      message: 'Task created successfully',
-      data: {
-        task_id: task.id,
-        list_name: task.list_name,
-        position: task.position,
-      },
-    };
   }
 
   @Get('get-all-task-list')
@@ -72,18 +63,11 @@ export class TaskListController {
 
     @Body() updateTaskNameDto: UpdateTaskListDto,
   ) {
-    try {
-      const updatedTask = await this.taskListService.updateTaskName(task_id, {
-        list_name: updateTaskNameDto.list_name,
-      });
+    const updatedTask = await this.taskListService.updateTaskName(task_id, {
+      list_name: updateTaskNameDto.list_name,
+    });
 
-      return updatedTask;
-    } catch (error: unknown) {
-      if (error instanceof NotFoundException) {
-        throw new NotFoundException(error);
-      }
-      throw new InternalServerErrorException(error || 'Internal server error');
-    }
+    return updatedTask;
   }
 
   @Put('update-positions')

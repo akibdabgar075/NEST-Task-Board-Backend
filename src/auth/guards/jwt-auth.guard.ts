@@ -7,12 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import { Request } from 'express';
-
-export interface JwtPayload {
-  user_id: number;
-  username: string;
-  email: string;
-}
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -42,7 +37,7 @@ export class JwtAuthGuard implements CanActivate {
       const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
       request['user'] = decoded;
       return true;
-    } catch (error: any) {
+    } catch (error) {
       throw new UnauthorizedException(error, 'Invalid or expired token');
     }
   }

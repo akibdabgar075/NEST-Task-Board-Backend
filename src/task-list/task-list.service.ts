@@ -9,15 +9,22 @@ import { In, Repository } from 'typeorm';
 import { TaskList } from './entities/task-list.entity';
 import { UpdateTaskListDto } from './dto/update-task-list.dto';
 
-import { TaskCardResult, TaskRows } from './interface/task.interface';
+import {
+  CreateTaskListResponse,
+  DeleteTaskResponse,
+  TaskCardResult,
+  TaskListResponse,
+  TaskRows,
+} from './interface/task.interface';
 
 import { UpdateTaskPositionsDto } from './dto/update-task-positions.dto';
 import { CacheService } from '../redis/cache.service';
+import { CacheKeys } from '../common/cache-keys.enum';
 
 @Injectable()
 export class TaskListService {
-  private readonly cacheTaskList = 'task-lists-all';
-  private readonly cacheKeyTasksWithCards = 'tasks-with-cards';
+  private readonly cacheTaskList = CacheKeys.TASK_LIST;
+  private readonly cacheKeyTasksWithCards = CacheKeys.TASKS_WITH_CARDS;
 
   constructor(
     @InjectRepository(TaskList)
@@ -30,7 +37,10 @@ export class TaskListService {
     return !!existing;
   }
 
-  async createTaskList(list_name: string, user_id: number): Promise<TaskList> {
+  async createTaskList(
+    list_name: string,
+    user_id: number,
+  ): Promise<CreateTaskListResponse> {
     try {
       const lastTask = await this.taskListRepo.findOne({
         where: {},
@@ -48,17 +58,24 @@ export class TaskListService {
       await this.cacheService.delete(this.cacheTaskList);
       await this.cacheService.delete(this.cacheKeyTasksWithCards);
 
-      return savedTask;
-    } catch (error: any) {
-      throw new InternalServerErrorException(error || 'Failed');
+      return {
+        message: 'Task created successfully',
+        data: {
+          task_id: savedTask.id,
+          list_name: savedTask.list_name,
+          position: savedTask.position,
+        },
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
   }
 
-  async findAllTask(): Promise<{ message: string; data: any[] }> {
+  async findAllTask(): Promise<TaskListResponse> {
     try {
       const cached = await this.cacheService.get<{
         message: string;
-        data: any[];
+        data: [];
       }>(this.cacheTaskList);
       if (cached) return cached;
 
@@ -82,9 +99,9 @@ export class TaskListService {
         data: filterData,
       };
 
-      await this.cacheService.set(this.cacheTaskList, result, 120);
+      await this.cacheService.set(this.cacheTaskList, result, 10000);
       return result;
-    } catch (error: unknown) {
+    } catch (error) {
       throw new InternalServerErrorException(
         error,
         'Failed to fetch task list',
@@ -95,7 +112,7 @@ export class TaskListService {
   async updateTaskName(
     id: number,
     updateName: Partial<UpdateTaskListDto>,
-  ): Promise<{ message: string; data: any }> {
+  ): Promise<{ message: string; data: {} }> {
     try {
       const task = await this.taskListRepo.findOne({ where: { id } });
       if (!task) throw new NotFoundException('Task list not found');
@@ -114,8 +131,12 @@ export class TaskListService {
           position: task.position,
         },
       };
-    } catch {
-      throw new InternalServerErrorException('Failed to update task name');
+    } catch (error) {
+      debugger;
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to delete task');
     }
   }
 
@@ -148,7 +169,7 @@ export class TaskListService {
     return { updatedCount: results.length };
   }
 
-  async deleteTaskById(id: number): Promise<{ message: string; data: any }> {
+  async deleteTaskById(id: number): Promise<DeleteTaskResponse> {
     try {
       const task = await this.taskListRepo.findOneBy({ id });
       if (!task) throw new NotFoundException('Task not found');

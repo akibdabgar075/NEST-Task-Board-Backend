@@ -31,3 +31,39 @@ export interface TaskCardResult {
     position: number | null;
   }[];
 }
+
+export interface CreateTaskListResponse {
+  message: string;
+  data: {
+    task_id: number;
+    list_name: string;
+    position: number;
+  };
+}
+
+export interface TaskListItem {
+  task_id: number;
+  list_name: string;
+  position: number;
+}
+
+export interface TaskListResponse {
+  message: string;
+  data: TaskListItem | TaskListItem[];
+}
+
+export interface DeleteTaskResponse {
+  message: string;
+  data: {
+    task_id: number;
+  };
+}
+
+export interface UpdateTaskPositionItem {
+  task_id: number;
+  position: number;
+}
+
+export interface UpdateTaskPositionsDto {
+  tasks: UpdateTaskPositionItem[];
+}

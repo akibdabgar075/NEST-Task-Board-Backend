@@ -19,6 +19,7 @@ import { UserPayload } from '../auth/user-payload.interface';
 import { JwtAuthGuard } from '../../src/auth/guards/jwt-auth.guard';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { CardsService } from './cards.service';
+import { ReorderCardDto } from './dto/recorder.card.dto';
 
 @ApiTags('Cards')
 @ApiBearerAuth('access-token')
@@ -48,5 +49,10 @@ export class CardsController {
   @Delete(':task_id/delete-card')
   async deleteCard(@Param('task_id', ParseIntPipe) task_id: number) {
     return await this.cardService.deleteCardById(task_id);
+  }
+
+  @Put('reorder-card')
+  async reorderCardController(@Body() dto: ReorderCardDto) {
+    return await this.cardService.reorderCards(dto);
   }
 }

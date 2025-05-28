@@ -9,7 +9,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export const AuthUser = createParamDecorator(
-  (_data: unknown, ctx: ExecutionContext) => {
+  (data: void, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<AuthenticatedRequest>();
     return request.user;
   },
