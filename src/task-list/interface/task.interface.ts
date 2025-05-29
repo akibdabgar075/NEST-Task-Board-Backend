@@ -58,7 +58,18 @@ export interface DeleteTaskResponse {
     task_id: number;
   };
 }
+export interface UpdatedCountResponse {
+  updatedCount: number;
+}
 
+export interface UpdateTaskNameResponse {
+  message: string;
+  data: {
+    task_id: number;
+    list_name: string;
+    position: number;
+  };
+}
 export interface UpdateTaskPositionItem {
   task_id: number;
   position: number;

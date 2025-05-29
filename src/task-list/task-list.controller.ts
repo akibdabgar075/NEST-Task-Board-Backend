@@ -38,7 +38,8 @@ export class TaskListController {
   @ApiBody({ type: CreateTaskListDto })
   async createTaskList(
     @Body() dto: CreateTaskListDto,
-    @AuthUser() user: UserPayload,
+    @AuthUser()
+    user: UserPayload,
   ) {
     const exists = await this.taskListService.findOneByName(dto?.list_name);
     if (exists) {

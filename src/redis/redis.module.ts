@@ -15,11 +15,12 @@ import { CacheService } from './cache.service';
         store: redisStore,
         host: config.get<string>('REDIS_HOST') || 'localhost',
         port: config.get<number>('REDIS_PORT') || 6379,
-        password: config.get<string>('REDIS_PASSWORD') || undefined,
+        password: config.get<string>('REDIS_PASSWORD') || null,
         ttl: config.get<number>('REDIS_TTL') || 60,
       }),
     }),
   ],
+
   providers: [CacheService],
   exports: [CacheModule, CacheService],
 })

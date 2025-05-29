@@ -15,10 +15,10 @@ export class CacheService {
   }
 
   async set<T>(key: string, value: T, ttl: number) {
-    await this.cacheManager.set(key, value, ttl);
+    await this.cacheManager.set(key, value, ttl * 1000);
   }
 
-  async delete(key: string): Promise<void> {
+  async del(key: string) {
     const redis = this.cacheManager;
     await redis.del(key);
   }

@@ -11,6 +11,10 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from './entities/user.entity';
 import { RegisterDto } from './dto/register-auth.dto';
 import { LoginDto } from './dto/login-auth.dto';
+import {
+  LoginResponse,
+  RegisterResponse,
+} from './interfaces/responses.interface';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +24,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterDto): Promise<RegisterResponse> {
     try {
       const existing = await this.userRepo.findOneBy({ email: dto.email });
 
@@ -50,7 +54,7 @@ export class AuthService {
     }
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto): Promise<LoginResponse> {
     try {
       const user = await this.userRepo.findOneBy({ email: dto.email });
 
@@ -69,7 +73,7 @@ export class AuthService {
         username: user.username,
       });
 
-      return { token };
+      return { message: 'Login successfully', data: { token } };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;

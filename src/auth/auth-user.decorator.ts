@@ -1,4 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { UserPayload } from './user-payload.interface';
 
 export interface AuthenticatedRequest extends Request {
   user: {
@@ -9,7 +10,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export const AuthUser = createParamDecorator(
-  (data: void, ctx: ExecutionContext) => {
+  (_data: UserPayload, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest<AuthenticatedRequest>();
     return request.user;
   },

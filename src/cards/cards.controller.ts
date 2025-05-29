@@ -40,7 +40,6 @@ export class CardsController {
   @Put('update-card/:card_id')
   updateCardController(
     @Body() dto: UpdateCardDto,
-    @AuthUser() user: UserPayload,
     @Param('card_id') card_id: number,
   ) {
     return this.cardService.updateCard(dto, card_id);

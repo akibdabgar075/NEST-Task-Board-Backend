@@ -52,8 +52,8 @@ export class CardsService {
 
       const savedCard = await this.cardRepository.save(newCard);
 
-      await this.cacheService.delete(this.cacheTaskList);
-      await this.cacheService.delete(this.cacheKeyTasksWithCards);
+      await this.cacheService.del(this.cacheTaskList);
+      await this.cacheService.del(this.cacheKeyTasksWithCards);
 
       return {
         message: 'Card created successfully.',
@@ -96,8 +96,8 @@ export class CardsService {
 
       const updated = await this.cardRepository.save(card);
 
-      await this.cacheService.delete(this.cacheTaskList);
-      await this.cacheService.delete(this.cacheKeyTasksWithCards);
+      await this.cacheService.del(this.cacheTaskList);
+      await this.cacheService.del(this.cacheKeyTasksWithCards);
 
       return {
         card_id: updated.id,
@@ -125,8 +125,8 @@ export class CardsService {
 
       await this.cardRepository.remove(card);
 
-      await this.cacheService.delete(this.cacheTaskList);
-      await this.cacheService.delete(this.cacheKeyTasksWithCards);
+      await this.cacheService.del(this.cacheTaskList);
+      await this.cacheService.del(this.cacheKeyTasksWithCards);
 
       return {
         message: 'Card deleted successfully',
@@ -189,8 +189,8 @@ export class CardsService {
         }
 
         card.position = newPosition;
-        await this.cacheService.delete(this.cacheTaskList);
-        await this.cacheService.delete(this.cacheKeyTasksWithCards);
+        await this.cacheService.del(this.cacheTaskList);
+        await this.cacheService.del(this.cacheKeyTasksWithCards);
         await this.cardRepository.save(card);
 
         return { message: 'Card moved successfully' };
@@ -220,8 +220,8 @@ export class CardsService {
 
         card.task = { id: destinationTaskId } as TaskList;
         card.position = newPosition;
-        await this.cacheService.delete(this.cacheTaskList);
-        await this.cacheService.delete(this.cacheKeyTasksWithCards);
+        await this.cacheService.del(this.cacheTaskList);
+        await this.cacheService.del(this.cacheKeyTasksWithCards);
         await this.cardRepository.save(card);
 
         return { message: 'Card moved successfully' };

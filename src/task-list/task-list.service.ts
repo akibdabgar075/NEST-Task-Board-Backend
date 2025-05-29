@@ -15,6 +15,8 @@ import {
   TaskCardResult,
   TaskListResponse,
   TaskRows,
+  UpdatedCountResponse,
+  UpdateTaskNameResponse,
 } from './interface/task.interface';
 
 import { UpdateTaskPositionsDto } from './dto/update-task-positions.dto';
@@ -55,8 +57,8 @@ export class TaskListService {
 
       const savedTask = await this.taskListRepo.save(task);
 
-      await this.cacheService.delete(this.cacheTaskList);
-      await this.cacheService.delete(this.cacheKeyTasksWithCards);
+      await this.cacheService.del(this.cacheTaskList);
+      await this.cacheService.del(this.cacheKeyTasksWithCards);
 
       return {
         message: 'Task created successfully',
@@ -77,6 +79,7 @@ export class TaskListService {
         message: string;
         data: [];
       }>(this.cacheTaskList);
+
       if (cached) return cached;
 
       const fetchAllList = await this.taskListRepo.find({
@@ -99,7 +102,7 @@ export class TaskListService {
         data: filterData,
       };
 
-      await this.cacheService.set(this.cacheTaskList, result, 10000);
+      await this.cacheService.set(this.cacheTaskList, result, 60);
       return result;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -112,7 +115,7 @@ export class TaskListService {
   async updateTaskName(
     id: number,
     updateName: Partial<UpdateTaskListDto>,
-  ): Promise<{ message: string; data: {} }> {
+  ): Promise<UpdateTaskNameResponse> {
     try {
       const task = await this.taskListRepo.findOne({ where: { id } });
       if (!task) throw new NotFoundException('Task list not found');
@@ -120,8 +123,8 @@ export class TaskListService {
       task.list_name = updateName.list_name || '';
       await this.taskListRepo.save(task);
 
-      await this.cacheService.delete(this.cacheTaskList);
-      await this.cacheService.delete(this.cacheKeyTasksWithCards);
+      await this.cacheService.del(this.cacheTaskList);
+      await this.cacheService.del(this.cacheKeyTasksWithCards);
 
       return {
         message: 'Task name updated successfully',
@@ -142,7 +145,7 @@ export class TaskListService {
 
   async bulkUpdatePositions(
     dto: UpdateTaskPositionsDto,
-  ): Promise<{ updatedCount: number }> {
+  ): Promise<UpdatedCountResponse> {
     const { tasks } = dto;
 
     if (!Array.isArray(tasks) || tasks.length === 0) {
@@ -163,8 +166,8 @@ export class TaskListService {
 
     const results = await Promise.all(updates);
 
-    await this.cacheService.delete(this.cacheTaskList);
-    await this.cacheService.delete(this.cacheKeyTasksWithCards);
+    await this.cacheService.del(this.cacheTaskList);
+    await this.cacheService.del(this.cacheKeyTasksWithCards);
 
     return { updatedCount: results.length };
   }
@@ -173,15 +176,15 @@ export class TaskListService {
     try {
       const task = await this.taskListRepo.findOneBy({ id });
       if (!task) throw new NotFoundException('Task not found');
-
+      const removeId = task.id;
       await this.taskListRepo.remove(task);
 
-      await this.cacheService.delete(this.cacheTaskList);
-      await this.cacheService.delete(this.cacheKeyTasksWithCards);
-
+      await this.cacheService.del(this.cacheTaskList);
+      await this.cacheService.del(this.cacheKeyTasksWithCards);
+      debugger;
       return {
         message: 'Task deleted successfully',
-        data: { task_id: task.id },
+        data: { task_id: removeId },
       };
     } catch {
       throw new InternalServerErrorException('Failed to delete task');
@@ -251,7 +254,7 @@ export class TaskListService {
 
       const finalResult = Object.values(tasksObj);
 
-      await this.cacheService.set(this.cacheKeyTasksWithCards, finalResult, 0);
+      await this.cacheService.set(this.cacheKeyTasksWithCards, finalResult, 60);
 
       return finalResult;
     } catch (error) {
