@@ -13,7 +13,6 @@ import {
   CreateTaskListResponse,
   DeleteTaskResponse,
   TaskCardResult,
-  TaskListResponse,
   TaskRows,
   UpdatedCountResponse,
   UpdateTaskNameResponse,
@@ -73,7 +72,7 @@ export class TaskListService {
     }
   }
 
-  async findAllTask(): Promise<TaskListResponse> {
+  async findAllTask() {
     try {
       const cached = await this.cacheService.get<{
         message: string;
@@ -135,7 +134,6 @@ export class TaskListService {
         },
       };
     } catch (error) {
-      debugger;
       if (error instanceof NotFoundException) {
         throw error;
       }
@@ -181,7 +179,7 @@ export class TaskListService {
 
       await this.cacheService.del(this.cacheTaskList);
       await this.cacheService.del(this.cacheKeyTasksWithCards);
-      debugger;
+
       return {
         message: 'Task deleted successfully',
         data: { task_id: removeId },

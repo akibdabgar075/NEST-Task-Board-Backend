@@ -68,7 +68,7 @@ export class CardsService {
       throw new InternalServerErrorException(error, 'Failed to create card');
     }
   }
-
+  
   async updateCard(
     dto: UpdateCardDto,
     cardId: number,

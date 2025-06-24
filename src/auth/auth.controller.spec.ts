@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { beforeEach, describe, it } from 'node:test';
 
-describe('AuthController', () => {
+void describe('AuthController', () => {
   let controller: AuthController;
 
   beforeEach(async () => {
@@ -15,7 +15,7 @@ describe('AuthController', () => {
     controller = module.get<AuthController>(AuthController);
   });
 
-  it('should be defined', () => {
+  void it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 });

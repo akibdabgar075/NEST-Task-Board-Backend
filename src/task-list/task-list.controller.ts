@@ -9,7 +9,6 @@ import {
   Get,
   Put,
   Param,
-  NotFoundException,
   InternalServerErrorException,
   Delete,
   ParseIntPipe,
@@ -25,6 +24,7 @@ import { UpdateTaskListDto } from './dto/update-task-list.dto';
 
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdateTaskPositionsDto } from './dto/update-task-positions.dto';
+import { UpdatedCountResponse } from './interface/task.interface';
 
 @ApiTags('Tasks')
 @ApiBearerAuth('access-token')
@@ -79,7 +79,7 @@ export class TaskListController {
   // })
   async updatePositions(
     @Body() dto: UpdateTaskPositionsDto,
-  ): Promise<{ updatedCount: number }> {
+  ): Promise<UpdatedCountResponse> {
     try {
       return this.taskListService.bulkUpdatePositions(dto);
     } catch (error) {

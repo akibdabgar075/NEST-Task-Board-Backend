@@ -73,7 +73,8 @@ export class AuthService {
         username: user.username,
       });
 
-      return { message: 'Login successfully', data: { token } };
+      // Use mapper to format response
+      return UserMapper.toAuthResponse(user, token);
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;

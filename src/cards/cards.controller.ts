@@ -38,11 +38,11 @@ export class CardsController {
   }
 
   @Put('update-card/:card_id')
-  updateCardController(
+  async updateCardController(
     @Body() dto: UpdateCardDto,
     @Param('card_id') card_id: number,
   ) {
-    return this.cardService.updateCard(dto, card_id);
+    return await this.cardService.updateCard(dto, card_id);
   }
 
   @Delete(':task_id/delete-card')
