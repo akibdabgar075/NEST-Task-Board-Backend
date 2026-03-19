@@ -15,6 +15,7 @@ import {
   LoginResponse,
   RegisterResponse,
 } from './interfaces/responses.interface';
+import { UserMapper } from './mappers/user.mapper';
 
 @Injectable()
 export class AuthService {
